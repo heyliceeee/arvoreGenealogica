@@ -32,17 +32,33 @@ casado("Alex Jones", "Mike Calebs").
 
 
 %	descendenciaDireta(filho, pai, mae).
-descendenciaDireta("Abby Hamilton", "John Hamilton", "Jan Simon").
-descendenciaDireta("John Hamilton", "John Hamilton", "Jan Simon").
-descendenciaDireta("Barb Hamilton", "John Hamilton", "Jan Simon").
-descendenciaDireta("Fae Smith", "Steve Smith", "Abby Hamilton").
-descendenciaDireta("Cami Smith", "Steve Smith", "Abby Hamilton").
-descendenciaDireta("Meg Hamilton", "John Hamilton", "Gabi Julian").
-descendenciaDireta("Pam Calebs", "Dale Calebs", "Barb Hamilton").
-descendenciaDireta("Mike Calebs", "Dale Calebs", "Barb Hamilton").
-descendenciaDireta("Angie Grant", "Mark Grant", "Pam Calebs").
-descendenciaDireta("Mary Calebs", "Mike Calebs", "Alex Jones").
+descDireta("Abby Hamilton", "John Hamilton", "Jan Simon").
+descDireta("John Hamilton Jr.", "John Hamilton", "Jan Simon").
+descDireta("Barb Hamilton", "John Hamilton", "Jan Simon").
+descDireta("Fae Smith", "Steve Smith", "Abby Hamilton").
+descDireta("Cami Smith", "Steve Smith", "Abby Hamilton").
+descDireta("Meg Hamilton", "John Hamilton", "Gabi Julian").
+descDireta("Pam Calebs", "Dale Calebs", "Barb Hamilton").
+descDireta("Mike Calebs", "Dale Calebs", "Barb Hamilton").
+descDireta("Angie Grant", "Mark Grant", "Pam Calebs").
+descDireta("Mary Calebs", "Mike Calebs", "Alex Jones").
 
 
 
 % faz queries á base de conhecimento
+%	irmao(pessoaX, pessoaY) :- descDireta(pessoaX, PAIX, MAEX), descDireta(pessoaY, PAIY, MAEY).
+irmao(X, Y) :- descDireta(X, PAI, MAE), descDireta(Y, PAI, MAE).
+
+% 	cunhado(pessoaX, pessoaY) :- irmao(pessoaX, pessoaZ), casado(pessoaY, pessoaZ).
+cunhado(X, Y) :- irmao(X, Z), (casado(Y, Z); casado(Z, Y)).
+
+% 	tio(pessoaX, pessoaY) :- descDireta(pessoaX, PAI, MAE), (casado(Y, W); casado(W, Y)), (irmao(pessoaY, PAI); irmao(pessoaY, MAE)).
+tio(X, Y) :- descDireta(X, PAI, MAE), 
+            (casado(Y, W); casado(W, Y)),
+            (irmao(Y, PAI); irmao(Y, MAE); irmao(W, PAI); irmao(W, MAE)).
+
+% primo(pessoaX, pessoaY) :- tio(pessoaX, Z), (descDireta(pessoaY, _, Z); descDireta(pessoaY, Z, _)).
+primo(X, Y) :- tio(X, Z), 
+            (descDireta(Y, _, Z); descDireta(Y, Z, _)).
+
+
